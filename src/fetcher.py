@@ -32,7 +32,7 @@ async def fetch_all() -> int:
     latest = get_latest_draw_no()
     current = latest + 1
     count = 0
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(follow_redirects=True) as client:
         while True:
             data = await fetch_draw(client, current)
             if not data:
@@ -47,7 +47,7 @@ async def fetch_all() -> int:
 
 async def fetch_latest() -> dict | None:
     latest = get_latest_draw_no()
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(follow_redirects=True) as client:
         data = await fetch_draw(client, latest + 1)
         if data:
             save_draw(data)

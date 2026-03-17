@@ -7,31 +7,32 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     /* ─── Reset & Base ────────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #080c10;
-      --surface:   #0e1520;
-      --surface2:  #131d2b;
-      --border:    #1e2d40;
-      --accent:    #3b82f6;
-      --accent-dim:#1d4ed8;
-      --text:      #e2e8f0;
-      --text-dim:  #64748b;
-      --text-muted:#334155;
-      --success:   #22c55e;
-      --warning:   #f59e0b;
-      --danger:    #ef4444;
+      --bg:         #080c10;
+      --surface:    #0e1520;
+      --surface2:   #131d2b;
+      --border:     #1e2d40;
+      --accent:     #00ff88;
+      --accent-dim: #00cc6a;
+      --accent-bg:  rgba(0,255,136,.08);
+      --text:       #e2e8f0;
+      --text-dim:   #64748b;
+      --text-muted: #334155;
+      --success:    #22c55e;
+      --warning:    #f59e0b;
+      --danger:     #ef4444;
+      --blue:       #3b82f6;
 
       /* Ball colors */
-      --ball-y:  #fbc400; /* 1-10  */
-      --ball-b:  #69c8f2; /* 11-20 */
-      --ball-r:  #ff6b6b; /* 21-30 */
-      --ball-g:  #aaaaaa; /* 31-40 */
-      --ball-gr: #b0d840; /* 41-45 */
+      --ball-y:  #fbc400;
+      --ball-b:  #69c8f2;
+      --ball-r:  #ff6b6b;
+      --ball-g:  #aaaaaa;
+      --ball-gr: #b0d840;
     }
 
     html { scroll-behavior: smooth; }
@@ -47,12 +48,11 @@
 
     /* ─── Typography ─────────────────────────────────────────────────────── */
     .mono { font-family: 'Space Mono', monospace; }
-
     h1, h2, h3 { font-family: 'Space Mono', monospace; letter-spacing: 0.05em; }
 
     /* ─── Layout Shell ───────────────────────────────────────────────────── */
     .shell {
-      max-width: 1100px;
+      max-width: 900px;
       margin: 0 auto;
       padding: 0 20px 60px;
     }
@@ -164,7 +164,7 @@
       font-family: 'Space Mono', monospace;
       font-size: 22px;
       font-weight: 700;
-      color: var(--accent);
+      color: var(--blue);
       line-height: 1;
     }
 
@@ -193,10 +193,19 @@
 
     .btn-primary {
       background: var(--accent);
-      color: #fff;
+      color: #000;
+      font-weight: 700;
     }
-    .btn-primary:hover { background: #2563eb; box-shadow: 0 0 14px rgba(59,130,246,.45); }
-    .btn-primary:disabled { background: var(--text-muted); cursor: not-allowed; }
+    .btn-primary:hover {
+      background: var(--accent-dim);
+      box-shadow: 0 0 18px rgba(0,255,136,.45);
+    }
+    .btn-primary:disabled {
+      background: var(--text-muted);
+      color: var(--text-dim);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
 
     .btn-secondary {
       background: var(--surface2);
@@ -205,104 +214,67 @@
     }
     .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
 
-    .btn-success {
-      background: #15803d;
-      color: #fff;
-    }
-    .btn-success:hover { background: #16a34a; box-shadow: 0 0 14px rgba(34,197,94,.35); }
+    .btn-lg { padding: 13px 32px; font-size: 13px; }
 
-    .btn-lg {
-      padding: 13px 32px;
-      font-size: 13px;
-    }
-
-    /* ─── Tabs ───────────────────────────────────────────────────────────── */
-    .tabs {
+    /* ─── Algorithm Chips ────────────────────────────────────────────────── */
+    .algo-chips {
       display: flex;
-      gap: 4px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 4px;
-      margin-bottom: 20px;
       flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
     }
 
-    .tab {
-      flex: 1;
-      min-width: 80px;
-      padding: 8px 12px;
-      border: none;
-      background: transparent;
-      color: var(--text-dim);
-      font-family: 'Space Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.08em;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: all 0.18s;
-      text-align: center;
-      white-space: nowrap;
-    }
-    .tab:hover { color: var(--text); }
-    .tab.active {
-      background: var(--accent);
-      color: #fff;
-      box-shadow: 0 2px 8px rgba(59,130,246,.4);
-    }
-
-    /* ─── Weight Sliders ─────────────────────────────────────────────────── */
-    #weight-panel {
+    .chip {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 12px 16px;
       background: var(--surface2);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 18px;
-      display: none;
-    }
-    #weight-panel.visible { display: block; }
-
-    .slider-row {
-      display: grid;
-      grid-template-columns: 120px 1fr 50px;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
-    .slider-label { font-size: 11px; color: var(--text-dim); font-family: 'Space Mono', monospace; }
-
-    input[type="range"] {
-      -webkit-appearance: none;
-      width: 100%;
-      height: 4px;
-      border-radius: 2px;
-      background: var(--border);
-      outline: none;
-    }
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 14px; height: 14px;
-      border-radius: 50%;
-      background: var(--accent);
+      border-radius: 10px;
       cursor: pointer;
-      box-shadow: 0 0 6px rgba(59,130,246,.5);
+      transition: all 0.18s ease;
+      min-width: 130px;
+      user-select: none;
     }
 
-    .slider-val {
+    .chip:hover:not(.disabled) {
+      border-color: rgba(0,255,136,.4);
+      background: rgba(0,255,136,.04);
+    }
+
+    .chip.active {
+      border-color: var(--accent);
+      background: var(--accent-bg);
+      box-shadow: 0 0 14px rgba(0,255,136,.2), inset 0 0 8px rgba(0,255,136,.05);
+    }
+
+    .chip.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .chip-label {
       font-family: 'Space Mono', monospace;
       font-size: 12px;
-      color: var(--accent);
-      text-align: right;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.05em;
+    }
+    .chip.active .chip-label { color: var(--accent); }
+
+    .chip-desc {
+      font-size: 11px;
+      color: var(--text-dim);
     }
 
-    .weight-sum {
-      font-size: 11px;
+    .select-hint {
       font-family: 'Space Mono', monospace;
-      text-align: right;
-      margin-top: 4px;
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-bottom: 20px;
     }
-    .weight-sum.ok { color: var(--success); }
-    .weight-sum.err { color: var(--danger); }
+    .select-hint.error { color: var(--danger); }
 
     /* ─── Generate Controls ──────────────────────────────────────────────── */
     .gen-controls {
@@ -317,7 +289,7 @@
     .results-area {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
     }
 
     .result-row {
@@ -325,19 +297,44 @@
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 16px 20px;
-      display: grid;
-      grid-template-columns: 24px 1fr auto;
-      align-items: center;
-      gap: 16px;
       transition: border-color 0.2s;
     }
     .result-row:hover { border-color: #2a3d52; }
-    .result-row.selected { border-color: var(--accent); background: rgba(59,130,246,.06); }
 
-    .result-row input[type="checkbox"] {
-      width: 16px; height: 16px;
-      accent-color: var(--accent);
-      cursor: pointer;
+    .result-row-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .method-badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 3px 9px;
+      border-radius: 99px;
+      text-transform: uppercase;
+      color: #000;
+    }
+
+    /* per-algo badge colors */
+    .badge-apriori     { background: #fbc400; }
+    .badge-conditional { background: #69c8f2; }
+    .badge-markov      { background: #b0d840; }
+    .badge-ensemble    { background: #ff6b6b; }
+    .badge-default     { background: #aaaaaa; }
+
+    .score-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-left: auto;
+    }
+    .score-text span {
+      color: var(--accent);
+      font-weight: 700;
     }
 
     .ball-row {
@@ -371,7 +368,6 @@
       transition: transform 0.1s;
     }
 
-    /* Spinning inner slot */
     .ball-slot {
       position: absolute;
       left: 0; right: 0;
@@ -392,7 +388,6 @@
     .ball-g  { background: radial-gradient(circle at 35% 35%, #d4d4d4, #aaaaaa, #6b6b6b); }
     .ball-gr { background: radial-gradient(circle at 35% 35%, #d8f078, #b0d840, #7da020); }
 
-    /* Bounce stop animation */
     @keyframes ballStop {
       0%   { transform: scale(1.15); }
       40%  { transform: scale(0.93); }
@@ -400,43 +395,13 @@
       85%  { transform: scale(0.98); }
       100% { transform: scale(1); }
     }
-
     .ball.stopped { animation: ballStop 0.35s ease forwards; }
 
-    /* Spinning glow */
     @keyframes spinGlow {
       0%, 100% { box-shadow: inset 0 -4px 8px rgba(0,0,0,.3), inset 0 3px 6px rgba(255,255,255,.35), 0 0 10px rgba(255,255,255,.15); }
       50%       { box-shadow: inset 0 -4px 8px rgba(0,0,0,.3), inset 0 3px 6px rgba(255,255,255,.35), 0 0 18px rgba(255,255,255,.35); }
     }
     .ball.spinning { animation: spinGlow 0.2s ease-in-out infinite; }
-
-    /* ─── Score Badge ────────────────────────────────────────────────────── */
-    .result-meta {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 4px;
-      min-width: 90px;
-    }
-
-    .score-badge {
-      font-family: 'Space Mono', monospace;
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 99px;
-      background: rgba(59,130,246,.15);
-      color: var(--accent);
-      border: 1px solid rgba(59,130,246,.3);
-      white-space: nowrap;
-    }
-
-    .method-label {
-      font-size: 10px;
-      color: var(--text-dim);
-      letter-spacing: 0.08em;
-      font-family: 'Space Mono', monospace;
-      text-align: right;
-    }
 
     /* ─── Empty State ────────────────────────────────────────────────────── */
     .empty-state {
@@ -446,118 +411,6 @@
     }
     .empty-state .icon { font-size: 40px; margin-bottom: 12px; opacity: .4; }
     .empty-state p { font-size: 13px; }
-
-    /* ─── Charts ─────────────────────────────────────────────────────────── */
-    .charts-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-    @media (max-width: 700px) { .charts-grid { grid-template-columns: 1fr; } }
-
-    .chart-card {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 16px;
-    }
-
-    .chart-card-title {
-      font-family: 'Space Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.12em;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
-
-    .chart-wrap { position: relative; height: 220px; }
-
-    /* ─── Table ──────────────────────────────────────────────────────────── */
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-    }
-    .data-table th {
-      font-family: 'Space Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.1em;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      border-bottom: 1px solid var(--border);
-      padding: 8px 10px;
-      text-align: left;
-    }
-    .data-table td {
-      padding: 7px 10px;
-      border-bottom: 1px solid rgba(30,45,64,.5);
-      color: var(--text);
-    }
-    .data-table tr:last-child td { border-bottom: none; }
-    .data-table tr:hover td { background: rgba(30,45,64,.4); }
-
-    .pair-badge {
-      display: inline-flex;
-      gap: 5px;
-    }
-    .pair-num {
-      font-family: 'Space Mono', monospace;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 2px 6px;
-      border-radius: 4px;
-      color: rgba(0,0,0,.7);
-    }
-
-    /* ─── Purchase Section ───────────────────────────────────────────────── */
-    .purchase-form {
-      display: grid;
-      grid-template-columns: 1fr 1fr auto;
-      gap: 12px;
-      align-items: end;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-    @media (max-width: 600px) { .purchase-form { grid-template-columns: 1fr; } }
-
-    .field { display: flex; flex-direction: column; gap: 5px; }
-    .field label {
-      font-family: 'Space Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.1em;
-      color: var(--text-dim);
-      text-transform: uppercase;
-    }
-    .field input {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
-      padding: 9px 12px;
-      font-family: 'Noto Sans KR', sans-serif;
-      font-size: 13px;
-      outline: none;
-      transition: border-color 0.18s;
-    }
-    .field input:focus { border-color: var(--accent); }
-
-    .purchase-notice {
-      font-size: 11px;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 16px;
-    }
-
-    .history-empty {
-      text-align: center;
-      padding: 24px;
-      color: var(--text-muted);
-      font-size: 12px;
-      font-family: 'Space Mono', monospace;
-    }
 
     /* ─── Loading Overlay ────────────────────────────────────────────────── */
     #loading-overlay {
@@ -621,7 +474,7 @@
     @keyframes toastIn { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform: none; } }
     .toast.success { border-left: 3px solid var(--success); }
     .toast.error   { border-left: 3px solid var(--danger); }
-    .toast.info    { border-left: 3px solid var(--accent); }
+    .toast.info    { border-left: 3px solid var(--blue); }
 
     /* ─── Responsiveness ─────────────────────────────────────────────────── */
     @media (max-width: 500px) {
@@ -629,6 +482,7 @@
       .ball { width: 40px; height: 40px; font-size: 13px; }
       .ball-slot { font-size: 13px; line-height: 40px; }
       .ball-row { gap: 6px; }
+      .chip { min-width: 110px; }
     }
 
     /* ─── Scanline effect ────────────────────────────────────────────────── */
@@ -682,8 +536,7 @@
         총 <strong id="hdr-total" class="mono">—</strong>회차 수집
       </span>
       <span>
-        캐시:
-        <span id="hdr-cache" class="mono">확인 중...</span>
+        캐시: <span id="hdr-cache" class="mono">확인 중...</span>
       </span>
       <span class="mono" id="hdr-latest">최신 회차: —</span>
     </div>
@@ -718,121 +571,26 @@
   <section>
     <div class="section-title">NUMBER GENERATION</div>
 
-    <!-- Tabs -->
-    <div class="tabs" id="method-tabs">
-      <button class="tab active" data-method="apriori">Apriori</button>
-      <button class="tab" data-method="conditional">조건부확률</button>
-      <button class="tab" data-method="markov">마르코프</button>
-      <button class="tab" data-method="ensemble">종합</button>
+    <!-- Algorithm Chip Selector -->
+    <div class="algo-chips" id="algo-chips">
+      <!-- chips injected by JS -->
     </div>
-
-    <!-- Weight Panel (ensemble only) -->
-    <div id="weight-panel">
-      <div class="slider-row">
-        <span class="slider-label">Apriori</span>
-        <input type="range" id="w-apriori" min="0" max="100" value="33" />
-        <span class="slider-val" id="wv-apriori">0.33</span>
-      </div>
-      <div class="slider-row">
-        <span class="slider-label">조건부확률</span>
-        <input type="range" id="w-conditional" min="0" max="100" value="34" />
-        <span class="slider-val" id="wv-conditional">0.34</span>
-      </div>
-      <div class="slider-row">
-        <span class="slider-label">마르코프</span>
-        <input type="range" id="w-markov" min="0" max="100" value="33" />
-        <span class="slider-val" id="wv-markov">0.33</span>
-      </div>
-      <div class="weight-sum ok" id="weight-sum">합계: 1.00 ✓</div>
-    </div>
+    <p class="select-hint" id="select-hint">최대 3개 선택 (현재 0개 선택됨)</p>
 
     <!-- Generate Button -->
     <div class="gen-controls">
       <button class="btn btn-primary btn-lg" id="btn-generate">
         ⚡ 번호 생성
       </button>
-      <span style="font-size:12px;color:var(--text-dim);">4세트 생성</span>
     </div>
 
     <!-- Results -->
     <div class="results-area" id="results-area">
       <div class="empty-state">
         <div class="icon">🎱</div>
-        <p>번호를 생성하려면 위의 버튼을 누르세요.</p>
+        <p>알고리즘을 선택한 뒤 버튼을 누르세요.</p>
       </div>
     </div>
-  </section>
-
-  <!-- ══ SECTION 3: ANALYSIS VISUALIZATION ═══════════════════════════════ -->
-  <section>
-    <div class="section-title">ANALYSIS VISUALIZATION</div>
-    <div class="charts-grid">
-      <div class="chart-card">
-        <div class="chart-card-title">번호 출현 빈도 (최근 100회)</div>
-        <div class="chart-wrap">
-          <canvas id="freq-chart"></canvas>
-        </div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-card-title">동반 출현 TOP 20 쌍</div>
-        <div style="max-height:240px;overflow-y:auto;">
-          <table class="data-table" id="pairs-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>번호 쌍</th>
-                <th>횟수</th>
-                <th>확률</th>
-              </tr>
-            </thead>
-            <tbody id="pairs-tbody">
-              <tr><td colspan="4" class="history-empty">데이터 로딩 중...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ══ SECTION 4: PURCHASE ══════════════════════════════════════════════ -->
-  <section>
-    <div class="section-title">PURCHASE</div>
-
-    <div class="purchase-notice">
-      🔒 아이디/비밀번호는 서버로 직접 전송되며 로컬에 저장되지 않습니다.
-    </div>
-
-    <div class="purchase-form">
-      <div class="field">
-        <label>동행복권 아이디</label>
-        <input type="text" id="lotto-id" placeholder="아이디 입력" autocomplete="off" />
-      </div>
-      <div class="field">
-        <label>비밀번호</label>
-        <input type="password" id="lotto-pw" placeholder="비밀번호 입력" autocomplete="off" />
-      </div>
-      <button class="btn btn-success btn-lg" id="btn-purchase">
-        🎟 구매하기
-      </button>
-    </div>
-
-    <div style="margin-bottom:12px;font-size:12px;color:var(--text-dim);">
-      위 생성 결과에서 체크박스로 구매할 세트를 선택하세요.
-    </div>
-
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>구매 시각</th>
-          <th>번호</th>
-          <th>방법</th>
-          <th>상태</th>
-        </tr>
-      </thead>
-      <tbody id="history-tbody">
-        <tr><td colspan="4" class="history-empty">구매 내역이 없습니다.</td></tr>
-      </tbody>
-    </table>
   </section>
 
 </div><!-- /shell -->
@@ -852,11 +610,14 @@ const BALL_CLASS = n => {
   return 'ball-gr';
 };
 
-const METHODS = {
-  apriori:     'Apriori',
-  conditional: '조건부확률',
-  markov:      '마르코프',
-  ensemble:    '종합 앙상블',
+const BADGE_CLASS = id => {
+  const map = {
+    apriori:     'badge-apriori',
+    conditional: 'badge-conditional',
+    markov:      'badge-markov',
+    ensemble:    'badge-ensemble',
+  };
+  return map[id] ?? 'badge-default';
 };
 
 function toast(msg, type = 'info', duration = 3200) {
@@ -888,24 +649,17 @@ async function apiFetch(path, opts = {}) {
    STATE
    ═══════════════════════════════════════════════════════════════════════════ */
 
-let currentMethod = 'apriori';
-let generatedSets = [];   // [{numbers, method, score}]
-let purchaseHistory = [];
-let freqChart = null;
+// List of available algorithms (populated from /api/algorithms or mock)
+let availableAlgorithms = [];
+// Set of currently selected algorithm IDs
+let selectedAlgorithms = new Set();
+const MAX_SELECTION = 3;
 
 /* ═══════════════════════════════════════════════════════════════════════════
    SLOT MACHINE ANIMATION
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/**
- * Animate a single ball element like a slot machine.
- * @param {HTMLElement} ballEl   - The .ball div
- * @param {HTMLElement} slotEl   - Inner .ball-slot span
- * @param {number}      finalNum - The number to stop on
- * @param {number}      delay    - ms until the ball stops
- */
 function spinBall(ballEl, slotEl, finalNum, delay) {
-  // Remove old color classes, set a spinning neutral
   ballEl.className = 'ball spinning';
   slotEl.textContent = '?';
 
@@ -913,7 +667,6 @@ function spinBall(ballEl, slotEl, finalNum, delay) {
   const interval = setInterval(() => {
     const rnd = Math.floor(Math.random() * 45) + 1;
     slotEl.textContent = rnd;
-    // Flash color while spinning
     ballEl.className = `ball spinning ${BALL_CLASS(rnd)}`;
     frame++;
   }, 55);
@@ -925,13 +678,9 @@ function spinBall(ballEl, slotEl, finalNum, delay) {
   }, delay);
 }
 
-/**
- * Animate a full row of 6 balls, staggered left-to-right.
- * Returns a Promise that resolves when all balls have stopped.
- */
 function animateRow(ballEls, slotEls, numbers) {
-  const BASE_SPIN = 1200;   // each ball spins at least this long
-  const STAGGER   = 280;    // extra delay per ball index
+  const BASE_SPIN = 1200;
+  const STAGGER   = 280;
 
   return new Promise(resolve => {
     numbers.forEach((num, i) => {
@@ -968,18 +717,24 @@ function createBall(num) {
    RESULT ROW RENDERER
    ═══════════════════════════════════════════════════════════════════════════ */
 
-function buildResultRow(idx, method) {
+function buildResultRow(algo) {
   const row = document.createElement('div');
   row.className = 'result-row';
-  row.dataset.idx = idx;
 
-  // Checkbox
-  const cb = document.createElement('input');
-  cb.type = 'checkbox';
-  cb.id = `sel-${idx}`;
-  cb.addEventListener('change', () => {
-    row.classList.toggle('selected', cb.checked);
-  });
+  // Header: badge + score
+  const header = document.createElement('div');
+  header.className = 'result-row-header';
+
+  const badge = document.createElement('span');
+  badge.className = `method-badge ${BADGE_CLASS(algo.id)}`;
+  badge.textContent = algo.label ?? algo.id;
+
+  const scoreText = document.createElement('span');
+  scoreText.className = 'score-text';
+  scoreText.innerHTML = 'score: <span>—</span>';
+
+  header.appendChild(badge);
+  header.appendChild(scoreText);
 
   // Ball row
   const ballRow = document.createElement('div');
@@ -993,79 +748,59 @@ function buildResultRow(idx, method) {
     slotEls.push(slot);
   }
 
-  // Meta
-  const meta = document.createElement('div');
-  meta.className = 'result-meta';
-
-  const scoreBadge = document.createElement('div');
-  scoreBadge.className = 'score-badge';
-  scoreBadge.textContent = '—';
-
-  const methodLabel = document.createElement('div');
-  methodLabel.className = 'method-label';
-  methodLabel.textContent = METHODS[method] ?? method;
-
-  meta.appendChild(scoreBadge);
-  meta.appendChild(methodLabel);
-
-  row.appendChild(cb);
+  row.appendChild(header);
   row.appendChild(ballRow);
-  row.appendChild(meta);
 
-  return { row, ballEls, slotEls, scoreBadge };
+  const scoreSpan = scoreText.querySelector('span');
+  return { row, ballEls, slotEls, scoreSpan };
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   MOCK DATA GENERATOR (fallback when API unavailable)
+   MOCK DATA (fallback when API unavailable)
    ═══════════════════════════════════════════════════════════════════════════ */
 
-function mockGenerateSets(method, count) {
+const MOCK_ALGORITHMS = [
+  { id: 'apriori',     label: 'Apriori',     description: '공동출현 빈도 기반' },
+  { id: 'conditional', label: '조건부확률',  description: '조건부 확률 체인' },
+  { id: 'markov',      label: '마르코프',    description: '마르코프 전이 행렬' },
+];
+
+function mockGenerateSets(methods, countPerMethod) {
   const sets = [];
-  for (let s = 0; s < count; s++) {
-    const nums = new Set();
-    while (nums.size < 6) nums.add(Math.floor(Math.random() * 45) + 1);
-    const sorted = [...nums].sort((a, b) => a - b);
-    sets.push({
-      numbers: sorted,
-      method,
-      score: (Math.random() * 0.4 + 0.6).toFixed(3),
-    });
-  }
+  methods.forEach(method => {
+    for (let s = 0; s < countPerMethod; s++) {
+      const nums = new Set();
+      while (nums.size < 6) nums.add(Math.floor(Math.random() * 45) + 1);
+      sets.push({
+        numbers: [...nums].sort((a, b) => a - b),
+        method,
+        score: (Math.random() * 0.4 + 0.6).toFixed(3),
+      });
+    }
+  });
   return sets;
 }
 
 function mockStats() {
   return {
-    total: 1127,
-    latest: 1127,
+    total:     1127,
+    latest:    1127,
     updatedAt: new Date().toISOString(),
   };
-}
-
-function mockFrequency() {
-  const nums = Array.from({ length: 45 }, (_, i) => ({
-    number: i + 1,
-    count: Math.floor(Math.random() * 60) + 40,
-  }));
-  nums.sort((a, b) => b.count - a.count);
-  return nums.slice(0, 20);
-}
-
-function mockPairs() {
-  const pairs = [];
-  for (let i = 0; i < 20; i++) {
-    const a = Math.floor(Math.random() * 44) + 1;
-    let b = Math.floor(Math.random() * 44) + 1;
-    while (b === a) b = Math.floor(Math.random() * 44) + 1;
-    pairs.push({ a, b, count: Math.floor(Math.random() * 50) + 30 });
-  }
-  pairs.sort((a, b) => b.count - a.count);
-  return pairs;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    API CALLS (with mock fallback)
    ═══════════════════════════════════════════════════════════════════════════ */
+
+async function fetchAlgorithms() {
+  try {
+    const data = await apiFetch('/api/algorithms');
+    return data.algorithms ?? data;
+  } catch {
+    return MOCK_ALGORITHMS;
+  }
+}
 
 async function fetchStats() {
   try {
@@ -1075,32 +810,14 @@ async function fetchStats() {
   }
 }
 
-async function fetchAnalysis(method, count, weights) {
+async function fetchGenerate(methods) {
   try {
-    const body = { method, count };
-    if (weights) body.weights = weights;
-    return await apiFetch('/api/analysis/generate', {
+    return await apiFetch('/api/generate', {
       method: 'POST',
-      body: JSON.stringify(body),
+      body: JSON.stringify({ methods, count_per_method: 1 }),
     });
   } catch {
-    return { sets: mockGenerateSets(method, count) };
-  }
-}
-
-async function fetchFrequency() {
-  try {
-    return await apiFetch('/api/analysis/frequency?limit=20&draws=100');
-  } catch {
-    return { data: mockFrequency() };
-  }
-}
-
-async function fetchPairs() {
-  try {
-    return await apiFetch('/api/analysis/pairs?limit=20');
-  } catch {
-    return { data: mockPairs() };
+    return { sets: mockGenerateSets(methods, 1) };
   }
 }
 
@@ -1116,11 +833,10 @@ function renderStats(data) {
   document.getElementById('stat-total').textContent   = total;
   document.getElementById('stat-latest').textContent  = latest;
   document.getElementById('stat-updated').textContent = updated;
-
   document.getElementById('hdr-total').textContent    = total;
   document.getElementById('hdr-latest').textContent   = `최신 회차: ${latest}`;
 
-  const cacheAge = data.cacheAge ?? 0; // minutes
+  const cacheAge = data.cacheAge ?? 0;
   const cacheEl  = document.getElementById('hdr-cache');
   if (cacheAge < 60) {
     cacheEl.innerHTML = '<span class="status-dot dot-ok"></span> 최신';
@@ -1130,86 +846,79 @@ function renderStats(data) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   FREQUENCY CHART
+   CHIP UI
    ═══════════════════════════════════════════════════════════════════════════ */
 
-function ballColor(n) {
-  if (n <= 10) return '#fbc400';
-  if (n <= 20) return '#69c8f2';
-  if (n <= 30) return '#ff6b6b';
-  if (n <= 40) return '#aaaaaa';
-  return '#b0d840';
+function updateHint() {
+  const hint = document.getElementById('select-hint');
+  const count = selectedAlgorithms.size;
+  if (count === 0) {
+    hint.textContent = `최대 ${MAX_SELECTION}개 선택 (현재 0개 선택됨)`;
+    hint.className = 'select-hint';
+  } else {
+    hint.textContent = `최대 ${MAX_SELECTION}개 선택 (현재 ${count}개 선택됨)`;
+    hint.className = 'select-hint';
+  }
 }
 
-function renderFreqChart(dataArr) {
-  const labels = dataArr.map(d => d.number);
-  const values = dataArr.map(d => d.count);
-  const colors = labels.map(n => ballColor(n));
-
-  const ctx = document.getElementById('freq-chart').getContext('2d');
-  if (freqChart) freqChart.destroy();
-
-  freqChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label: '출현 횟수',
-        data: values,
-        backgroundColor: colors,
-        borderRadius: 4,
-        borderSkipped: false,
-      }],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            title: ctx => `번호 ${ctx[0].label}`,
-            label: ctx => ` ${ctx.parsed.y}회 출현`,
-          },
-        },
-      },
-      scales: {
-        x: {
-          ticks: { color: '#64748b', font: { family: 'Space Mono', size: 10 } },
-          grid: { color: '#1e2d40' },
-        },
-        y: {
-          ticks: { color: '#64748b', font: { family: 'Space Mono', size: 10 } },
-          grid: { color: '#1e2d40' },
-        },
-      },
-    },
+function updateChipStates() {
+  const chips = document.querySelectorAll('#algo-chips .chip');
+  const atMax = selectedAlgorithms.size >= MAX_SELECTION;
+  chips.forEach(chip => {
+    const id = chip.dataset.id;
+    const isActive = selectedAlgorithms.has(id);
+    chip.classList.toggle('active', isActive);
+    chip.classList.toggle('disabled', atMax && !isActive);
   });
+  updateHint();
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   PAIRS TABLE
-   ═══════════════════════════════════════════════════════════════════════════ */
+function renderChips(algorithms) {
+  const container = document.getElementById('algo-chips');
+  container.innerHTML = '';
 
-function renderPairs(pairs, totalDraws = 1127) {
-  const tbody = document.getElementById('pairs-tbody');
-  tbody.innerHTML = '';
-  pairs.forEach((p, i) => {
-    const tr = document.createElement('tr');
-    const prob = ((p.count / totalDraws) * 100).toFixed(1);
-    tr.innerHTML = `
-      <td class="mono" style="color:var(--text-dim)">${i + 1}</td>
-      <td>
-        <span class="pair-badge">
-          <span class="pair-num" style="background:${ballColor(p.a)}">${p.a}</span>
-          <span class="pair-num" style="background:${ballColor(p.b)}">${p.b}</span>
-        </span>
-      </td>
-      <td class="mono" style="color:var(--accent)">${p.count}</td>
-      <td class="mono" style="color:var(--text-dim)">${prob}%</td>
-    `;
-    tbody.appendChild(tr);
+  algorithms.forEach(algo => {
+    const chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.dataset.id = algo.id;
+
+    const label = document.createElement('span');
+    label.className = 'chip-label';
+    label.textContent = algo.label ?? algo.id;
+
+    const desc = document.createElement('span');
+    desc.className = 'chip-desc';
+    desc.textContent = algo.description ?? '';
+
+    chip.appendChild(label);
+    chip.appendChild(desc);
+
+    chip.addEventListener('click', () => {
+      const id = chip.dataset.id;
+      if (selectedAlgorithms.has(id)) {
+        selectedAlgorithms.delete(id);
+        updateChipStates();
+      } else {
+        if (selectedAlgorithms.size >= MAX_SELECTION) {
+          // Flash error hint
+          const hint = document.getElementById('select-hint');
+          hint.textContent = `최대 ${MAX_SELECTION}개까지만 선택할 수 있습니다.`;
+          hint.className = 'select-hint error';
+          setTimeout(() => {
+            hint.className = 'select-hint';
+            updateHint();
+          }, 2000);
+          return;
+        }
+        selectedAlgorithms.add(id);
+        updateChipStates();
+      }
+    });
+
+    container.appendChild(chip);
   });
+
+  updateChipStates();
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1217,53 +926,47 @@ function renderPairs(pairs, totalDraws = 1127) {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 async function generateNumbers() {
+  if (selectedAlgorithms.size === 0) {
+    toast('알고리즘을 하나 이상 선택하세요.', 'error');
+    return;
+  }
+
   const btn = document.getElementById('btn-generate');
   btn.disabled = true;
   showLoading('ORACLE COMPUTING...');
 
-  // Get weights if ensemble
-  let weights = null;
-  if (currentMethod === 'ensemble') {
-    const wa = parseInt(document.getElementById('w-apriori').value);
-    const wc = parseInt(document.getElementById('w-conditional').value);
-    const wm = parseInt(document.getElementById('w-markov').value);
-    const total = wa + wc + wm;
-    weights = {
-      apriori:     wa / total,
-      conditional: wc / total,
-      markov:      wm / total,
-    };
-  }
+  const methods = [...selectedAlgorithms];
+  // Map method IDs to algo objects for badge rendering
+  const algoById = {};
+  availableAlgorithms.forEach(a => { algoById[a.id] = a; });
 
   try {
-    const res = await fetchAnalysis(currentMethod, 4, weights);
+    const res = await fetchGenerate(methods);
     const sets = res.sets ?? res;
-    generatedSets = sets;
 
-    // Build result rows
     const area = document.getElementById('results-area');
     area.innerHTML = '';
 
     const rowData = [];
-    sets.forEach((set, idx) => {
-      const { row, ballEls, slotEls, scoreBadge } = buildResultRow(idx, set.method ?? currentMethod);
+    sets.forEach(set => {
+      const algoId = set.method ?? methods[0];
+      const algo = algoById[algoId] ?? { id: algoId, label: algoId };
+      const { row, ballEls, slotEls, scoreSpan } = buildResultRow(algo);
       area.appendChild(row);
-      rowData.push({ ballEls, slotEls, numbers: set.numbers, score: set.score, scoreBadge });
+      rowData.push({ ballEls, slotEls, numbers: set.numbers, score: set.score, scoreSpan });
     });
 
     hideLoading();
 
-    // Animate rows sequentially (slight overlap)
+    // Animate rows with slight stagger between row starts
     for (let i = 0; i < rowData.length; i++) {
-      const { ballEls, slotEls, numbers, score, scoreBadge } = rowData[i];
-      // Small delay between row starts
+      const { ballEls, slotEls, numbers, score, scoreSpan } = rowData[i];
       await new Promise(r => setTimeout(r, i === 0 ? 0 : 200));
       animateRow(ballEls, slotEls, numbers).then(() => {
-        scoreBadge.textContent = `score: ${score}`;
+        scoreSpan.textContent = score ?? '—';
       });
     }
 
-    // Wait for all rows to finish
     const lastRowDuration = 1200 + 5 * 280 + 400;
     await new Promise(r => setTimeout(r, lastRowDuration + rowData.length * 200));
 
@@ -1278,136 +981,17 @@ async function generateNumbers() {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   PURCHASE
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-async function doPurchase() {
-  const id = document.getElementById('lotto-id').value.trim();
-  const pw = document.getElementById('lotto-pw').value.trim();
-
-  if (!id || !pw) { toast('아이디와 비밀번호를 입력하세요.', 'error'); return; }
-
-  const selected = generatedSets.filter((_, i) => {
-    const cb = document.getElementById(`sel-${i}`);
-    return cb && cb.checked;
-  });
-
-  if (selected.length === 0) { toast('구매할 세트를 선택하세요.', 'error'); return; }
-
-  showLoading('PURCHASING...');
-  try {
-    const res = await fetch('/api/purchase', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, pw, sets: selected }),
-    });
-
-    const data = res.ok ? await res.json() : { success: false, message: '서버 오류' };
-
-    if (data.success) {
-      selected.forEach(s => {
-        addHistory(s.numbers, s.method, '완료');
-      });
-      toast(`${selected.length}세트 구매 완료!`, 'success');
-      document.getElementById('lotto-pw').value = '';
-    } else {
-      throw new Error(data.message ?? '구매 실패');
-    }
-  } catch (err) {
-    // Demo mode — still add to history
-    selected.forEach(s => addHistory(s.numbers, s.method, '시뮬레이션'));
-    toast(`(데모) 구매 시뮬레이션: ${selected.length}세트`, 'info');
-    document.getElementById('lotto-pw').value = '';
-  } finally {
-    hideLoading();
-  }
-}
-
-function addHistory(numbers, method, status) {
-  const now = new Date().toLocaleString('ko-KR');
-  purchaseHistory.unshift({ numbers, method, status, time: now });
-  renderHistory();
-}
-
-function renderHistory() {
-  const tbody = document.getElementById('history-tbody');
-  tbody.innerHTML = '';
-  if (purchaseHistory.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="4" class="history-empty">구매 내역이 없습니다.</td></tr>';
-    return;
-  }
-  purchaseHistory.forEach(h => {
-    const tr = document.createElement('tr');
-    const balls = h.numbers.map(n =>
-      `<span class="pair-num" style="background:${ballColor(n)};display:inline-block;margin:1px;">${n}</span>`
-    ).join('');
-    const statusColor = h.status === '완료' ? 'var(--success)' : 'var(--accent)';
-    tr.innerHTML = `
-      <td class="mono" style="font-size:11px;color:var(--text-dim)">${h.time}</td>
-      <td><span class="pair-badge" style="flex-wrap:wrap;">${balls}</span></td>
-      <td style="font-size:11px;color:var(--text-dim)">${METHODS[h.method] ?? h.method}</td>
-      <td><span style="color:${statusColor};font-size:12px;">${h.status}</span></td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   WEIGHT SLIDERS
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-function updateWeights() {
-  const wa = parseInt(document.getElementById('w-apriori').value);
-  const wc = parseInt(document.getElementById('w-conditional').value);
-  const wm = parseInt(document.getElementById('w-markov').value);
-  const total = wa + wc + wm;
-
-  const fmt = v => (v / total).toFixed(2);
-  document.getElementById('wv-apriori').textContent     = fmt(wa);
-  document.getElementById('wv-conditional').textContent = fmt(wc);
-  document.getElementById('wv-markov').textContent      = fmt(wm);
-
-  const sumEl = document.getElementById('weight-sum');
-  sumEl.textContent = '합계: 1.00 ✓';
-  sumEl.className = 'weight-sum ok';
-}
-
-['w-apriori', 'w-conditional', 'w-markov'].forEach(id => {
-  document.getElementById(id).addEventListener('input', updateWeights);
-});
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   TABS
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-document.querySelectorAll('#method-tabs .tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('#method-tabs .tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    currentMethod = tab.dataset.method;
-
-    const wp = document.getElementById('weight-panel');
-    if (currentMethod === 'ensemble') {
-      wp.classList.add('visible');
-    } else {
-      wp.classList.remove('visible');
-    }
-  });
-});
-
-/* ═══════════════════════════════════════════════════════════════════════════
    EVENT LISTENERS
    ═══════════════════════════════════════════════════════════════════════════ */
 
 document.getElementById('btn-generate').addEventListener('click', generateNumbers);
-document.getElementById('btn-purchase').addEventListener('click', doPurchase);
 
 document.getElementById('btn-update').addEventListener('click', async () => {
   const btn = document.getElementById('btn-update');
   btn.disabled = true;
   btn.textContent = '업데이트 중...';
   try {
-    await fetch('/api/update', { method: 'POST' }).catch(() => {});
+    await fetch('/api/fetch?mode=all', { method: 'POST' }).catch(() => {});
     const stats = await fetchStats();
     renderStats(stats);
     toast('데이터 업데이트 완료!', 'success');
@@ -1424,30 +1008,16 @@ document.getElementById('btn-update').addEventListener('click', async () => {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 async function init() {
+  // Load algorithms and render chips
+  availableAlgorithms = await fetchAlgorithms();
+  renderChips(availableAlgorithms);
+
   // Load stats
   try {
     const stats = await fetchStats();
     renderStats(stats);
   } catch (e) {
     console.warn('Stats load failed', e);
-  }
-
-  // Load frequency chart
-  try {
-    const freqRes = await fetchFrequency();
-    const freqData = freqRes.data ?? freqRes;
-    renderFreqChart(freqData);
-  } catch (e) {
-    console.warn('Freq chart failed', e);
-  }
-
-  // Load pairs table
-  try {
-    const pairsRes = await fetchPairs();
-    const pairsData = pairsRes.data ?? pairsRes;
-    renderPairs(pairsData);
-  } catch (e) {
-    console.warn('Pairs load failed', e);
   }
 }
 
