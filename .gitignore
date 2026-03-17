@@ -3,3 +3,5 @@ __pycache__/
 .env
 db/lotto.db
 .venv/
+node_modules/
+tests/ui/node_modules/
