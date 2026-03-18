@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LOTTO ORACLE 3D</title>
+  <link rel="stylesheet" href="style-3d.css" />
+
+  <!--
+    importmap: ES Module 에서 'three' 처럼 짧게 쓸 수 있게 실제 URL을 매핑
+    CDN에서 Three.js를 불러오므로 npm 설치 불필요
+    addons/: OrbitControls 등 부가 모듈
+  -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three":                        "https://cdn.jsdelivr.net/npm/three@0.163/build/three.module.js",
+      "three/addons/":                "https://cdn.jsdelivr.net/npm/three@0.163/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <!-- Three.js 가 렌더링할 캔버스 (scene.js 에서 getElementById('c') 로 참조) -->
+  <canvas id="c"></canvas>
+
+  <!-- HUD: 캔버스 위에 position:fixed 로 올라가는 UI (style-3d.css 참고) -->
+  <div id="hud">
+    <div id="credit-display">CREDIT: <span id="cnum">3</span></div>
+    <div id="msg-box">레버를 당겨 번호를 생성하세요!</div>
+  </div>
+
+  <!-- 하단 알고리즘 태그 힌트 -->
+  <div id="algo-hint"></div>
+
+  <!-- 조작 안내 -->
+  <div id="hint">🖱 드래그: 회전 &nbsp;|&nbsp; 스크롤: 줌 &nbsp;|&nbsp; 동전: 크레딧 충전 &nbsp;|&nbsp; 레버: 번호 생성</div>
+
+  <!-- 데이터 상태 (우하단) -->
+  <div id="data-status"></div>
+
+  <!-- ES Module 진입점: main.js 가 모든 모듈을 연결 -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

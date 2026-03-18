@@ -1,0 +1,101 @@
+/* style-3d.css — LOTTO ORACLE 3D UI 스타일
+ *
+ * Three.js 캔버스는 전체 화면을 차지하고,
+ * HUD(크레딧, 메시지 등)는 position:fixed 로 캔버스 위에 overlay해요.
+ * pointer-events: none → 마우스 이벤트가 HUD를 통과해서 3D 씬에 전달됨
+ */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #f0e6ff;
+  overflow: hidden;           /* 스크롤바 숨김 */
+  font-family: 'Courier New', Courier, monospace;
+}
+
+canvas {
+  display: block;
+}
+
+/* ── HUD (Head-Up Display) ───────────────────────────────────────────── */
+#hud {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  pointer-events: none;  /* 마우스 클릭이 아래 3D 씬으로 통과 */
+  z-index: 10;
+}
+
+#credit-display {
+  background: #2d1b4e;
+  color: #ffd700;
+  padding: 8px 22px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  border: 3px solid #4a3570;
+}
+
+#msg-box {
+  background: rgba(255, 255, 255, 0.88);
+  color: #333;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  letter-spacing: 1px;
+  border: 2px solid #d4c5f0;
+  max-width: 320px;
+  text-align: center;
+}
+
+/* ── 하단 알고리즘 태그 힌트 ─────────────────────────────────────────── */
+#algo-hint {
+  position: fixed;
+  bottom: 52px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.atag {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #333;
+  border: 2px solid rgba(0, 0, 0, 0.12);
+}
+
+/* ── 조작 힌트 ───────────────────────────────────────────────────────── */
+#hint {
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #888;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.75);
+  padding: 5px 16px;
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ── 데이터 상태 표시 (우하단) ───────────────────────────────────────── */
+#data-status {
+  position: fixed;
+  bottom: 18px;
+  right: 20px;
+  color: #aaa;
+  font-size: 11px;
+  pointer-events: none;
+  z-index: 10;
+}
