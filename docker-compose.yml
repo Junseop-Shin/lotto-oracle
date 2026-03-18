@@ -6,6 +6,4 @@ services:
       - "3001:8000"
     volumes:
       - ./db:/app/db
-    env_file:
-      - .env
     restart: unless-stopped
