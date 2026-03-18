@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="title-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fbc400"/>
+      <stop offset="50%" stop-color="#69c8f2"/>
+      <stop offset="100%" stop-color="#b0d840"/>
+    </linearGradient>
+    <linearGradient id="logo-grad" x1="135deg" x2="0%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#fbc400"/>
+      <stop offset="100%" stop-color="#ff6b6b"/>
+    </linearGradient>
+    <radialGradient id="ball-y" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ffe066"/>
+      <stop offset="55%" stop-color="#fbc400"/>
+      <stop offset="100%" stop-color="#c49200"/>
+    </radialGradient>
+    <radialGradient id="ball-b" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#a8e6ff"/>
+      <stop offset="55%" stop-color="#69c8f2"/>
+      <stop offset="100%" stop-color="#2b8cb8"/>
+    </radialGradient>
+    <radialGradient id="ball-r" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ffaaaa"/>
+      <stop offset="55%" stop-color="#ff6b6b"/>
+      <stop offset="100%" stop-color="#c73333"/>
+    </radialGradient>
+    <radialGradient id="ball-g" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#d4d4d4"/>
+      <stop offset="55%" stop-color="#aaaaaa"/>
+      <stop offset="100%" stop-color="#6b6b6b"/>
+    </radialGradient>
+    <radialGradient id="ball-gr" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#d8f078"/>
+      <stop offset="55%" stop-color="#b0d840"/>
+      <stop offset="100%" stop-color="#7da020"/>
+    </radialGradient>
+    <filter id="glow-y">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#080c10"/>
+
+  <!-- Subtle grid lines -->
+  <line x1="0" y1="210" x2="1200" y2="210" stroke="#1e2d40" stroke-width="1"/>
+  <line x1="0" y1="420" x2="1200" y2="420" stroke="#1e2d40" stroke-width="1"/>
+  <line x1="400" y1="0" x2="400" y2="630" stroke="#1e2d40" stroke-width="1"/>
+  <line x1="800" y1="0" x2="800" y2="630" stroke="#1e2d40" stroke-width="1"/>
+
+  <!-- Logo circle -->
+  <circle cx="80" cy="72" r="36" fill="url(#logo-grad)" opacity="0.9"/>
+  <text x="80" y="82" font-family="monospace" font-size="26" font-weight="700" fill="#000" text-anchor="middle">&#x1F52E;</text>
+
+  <!-- Title -->
+  <text x="136" y="90" font-family="'Courier New', monospace" font-size="54" font-weight="700" letter-spacing="6" fill="url(#title-grad)">LOTTO ORACLE</text>
+
+  <!-- Subtitle -->
+  <text x="80" y="148" font-family="'Courier New', monospace" font-size="18" fill="#64748b" letter-spacing="2">LOTTO NUMBER PREDICTION ENGINE</text>
+
+  <!-- Divider -->
+  <line x1="80" y1="178" x2="1120" y2="178" stroke="#1e2d40" stroke-width="1"/>
+
+  <!-- DATA STATUS label -->
+  <text x="80" y="230" font-family="'Courier New', monospace" font-size="13" fill="#64748b" letter-spacing="3">DATA STATUS</text>
+  <line x1="222" y1="224" x2="500" y2="224" stroke="#1e2d40" stroke-width="1"/>
+
+  <!-- Stat cards -->
+  <rect x="80" y="248" width="200" height="90" rx="8" fill="#0e1520" stroke="#1e2d40" stroke-width="1"/>
+  <text x="96" y="275" font-family="monospace" font-size="11" fill="#64748b" letter-spacing="2">TOTAL DRAWS</text>
+  <text x="96" y="318" font-family="'Courier New', monospace" font-size="34" font-weight="700" fill="#3b82f6">1127</text>
+
+  <rect x="300" y="248" width="200" height="90" rx="8" fill="#0e1520" stroke="#1e2d40" stroke-width="1"/>
+  <text x="316" y="275" font-family="monospace" font-size="11" fill="#64748b" letter-spacing="2">LATEST DRAW</text>
+  <text x="316" y="318" font-family="'Courier New', monospace" font-size="34" font-weight="700" fill="#3b82f6">1127</text>
+
+  <!-- STATUS dot -->
+  <circle cx="96" cy="364" r="5" fill="#22c55e"/>
+  <text x="110" y="370" font-family="monospace" font-size="13" fill="#64748b">SYSTEM ONLINE</text>
+
+  <!-- Divider -->
+  <line x1="80" y1="400" x2="1120" y2="400" stroke="#1e2d40" stroke-width="1"/>
+
+  <!-- NUMBER GENERATION label -->
+  <text x="80" y="442" font-family="'Courier New', monospace" font-size="13" fill="#64748b" letter-spacing="3">NUMBER GENERATION</text>
+  <line x1="296" y1="436" x2="1120" y2="436" stroke="#1e2d40" stroke-width="1"/>
+
+  <!-- Lotto Balls -->
+  <!-- Ball 1 (yellow: 1-10) -->
+  <circle cx="175" cy="530" r="52" fill="url(#ball-y)" filter="url(#glow-y)"/>
+  <text x="175" y="546" font-family="'Courier New', monospace" font-size="30" font-weight="700" fill="rgba(0,0,0,0.75)" text-anchor="middle">07</text>
+
+  <!-- Ball 2 (blue: 11-20) -->
+  <circle cx="310" cy="530" r="52" fill="url(#ball-b)"/>
+  <text x="310" y="546" font-family="'Courier New', monospace" font-size="30" font-weight="700" fill="rgba(0,0,0,0.75)" text-anchor="middle">14</text>
+
+  <!-- Ball 3 (red: 21-30) -->
+  <circle cx="445" cy="530" r="52" fill="url(#ball-r)"/>
+  <text x="445" y="546" font-family="'Courier New', monospace" font-size="30" font-weight="700" fill="rgba(0,0,0,0.75)" text-anchor="middle">23</text>
+
+  <!-- Ball 4 (grey: 31-40) -->
+  <circle cx="580" cy="530" r="52" fill="url(#ball-g)"/>
+  <text x="580" y="546" font-family="'Courier New', monospace" font-size="30" font-weight="700" fill="rgba(0,0,0,0.75)" text-anchor="middle">35</text>
+
+  <!-- Ball 5 (green: 31-40) -->
+  <circle cx="715" cy="530" r="52" fill="url(#ball-gr)"/>
+  <text x="715" y="546" font-family="'Courier New', monospace" font-size="30" font-weight="700" fill="rgba(0,0,0,0.75)" text-anchor="middle">41</text>
+
+  <!-- Ball 6 (blue: 11-20) -->
+  <circle cx="850" cy="530" r="52" fill="url(#ball-b)"/>
+  <text x="850" y="546" font-family="'Courier New', monospace" font-size="30" font-weight="700" fill="rgba(0,0,0,0.75)" text-anchor="middle">17</text>
+
+  <!-- Score text -->
+  <text x="940" y="510" font-family="monospace" font-size="13" fill="#64748b">SCORE</text>
+  <text x="940" y="545" font-family="'Courier New', monospace" font-size="28" font-weight="700" fill="#00ff88">0.847</text>
+
+  <!-- Algorithm badge -->
+  <rect x="940" y="556" width="140" height="28" rx="14" fill="#fbc400"/>
+  <text x="1010" y="575" font-family="monospace" font-size="12" font-weight="700" fill="#000" text-anchor="middle">ENSEMBLE</text>
+
+  <!-- Tech stack bottom right -->
+  <text x="1120" y="200" font-family="monospace" font-size="14" fill="#334155" text-anchor="end">Python</text>
+  <text x="1120" y="224" font-family="monospace" font-size="14" fill="#334155" text-anchor="end">FastAPI</text>
+  <text x="1120" y="248" font-family="monospace" font-size="14" fill="#334155" text-anchor="end">Docker</text>
+  <text x="1120" y="272" font-family="monospace" font-size="14" fill="#334155" text-anchor="end">GitHub Actions</text>
+</svg>
