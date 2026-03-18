@@ -1,215 +1,232 @@
 /**
- * Vitest + @testing-library/dom tests for slot machine UI logic.
- * Extracts and tests the core JS functions from index.html.
+ * UI module tests — state.js + api.js
+ *
+ * state.js: pure exports (no DOM), testable directly.
+ * api.js:   mocks fetch + ui.js (ui.js has DOM side-effects at import time).
+ *
+ * Run: cd tests/ui && npm test
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { screen, waitFor } from "@testing-library/dom";
+
+import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 
 // ---------------------------------------------------------------------------
-// Extracted slot machine logic (mirrors index.html JS)
+// Mock ui.js before importing api.js  (ui.js calls getElementById at top level)
 // ---------------------------------------------------------------------------
-
-const BALL_COLORS = {
-  yellow: { numbers: [1, 10], class: "ball-yellow" },
-  blue: { numbers: [11, 20], class: "ball-blue" },
-  red: { numbers: [21, 30], class: "ball-red" },
-  gray: { numbers: [31, 40], class: "ball-gray" },
-  green: { numbers: [41, 45], class: "ball-green" },
-};
-
-function getBallColorClass(n) {
-  if (n <= 10) return "ball-yellow";
-  if (n <= 20) return "ball-blue";
-  if (n <= 30) return "ball-red";
-  if (n <= 40) return "ball-gray";
-  return "ball-green";
-}
-
-function createBallElement(n) {
-  const el = document.createElement("div");
-  el.className = `ball ${getBallColorClass(n)}`;
-  el.textContent = n;
-  return el;
-}
-
-function spinBall(ballEl, finalNumber, stopDelay) {
-  return new Promise((resolve) => {
-    const interval = setInterval(() => {
-      const rand = Math.floor(Math.random() * 45) + 1;
-      ballEl.textContent = rand;
-      ballEl.className = `ball spinning ${getBallColorClass(rand)}`;
-    }, 50);
-
-    setTimeout(() => {
-      clearInterval(interval);
-      ballEl.textContent = finalNumber;
-      ballEl.className = `ball stopped ${getBallColorClass(finalNumber)}`;
-      resolve();
-    }, stopDelay);
-  });
-}
-
-async function animateRow(rowEl, numbers, baseDelay = 300) {
-  const balls = rowEl.querySelectorAll(".ball");
-  const promises = numbers.map((n, i) =>
-    spinBall(balls[i], n, baseDelay + i * 280)
-  );
-  await Promise.all(promises);
-}
-
-function renderResultRow(numbers, method, methodLabel) {
-  const row = document.createElement("div");
-  row.className = "result-row";
-  row.dataset.method = method;
-
-  const title = document.createElement("span");
-  title.className = "method-label";
-  title.textContent = methodLabel;
-  row.appendChild(title);
-
-  const ballsContainer = document.createElement("div");
-  ballsContainer.className = "balls-container";
-  numbers.forEach((n) => {
-    ballsContainer.appendChild(createBallElement(n));
-  });
-  row.appendChild(ballsContainer);
-  return row;
-}
-
-function validateAlgorithmSelection(selected, max = 3) {
-  if (selected.length === 0) return { valid: false, error: "하나 이상 선택하세요" };
-  if (selected.length > max) return { valid: false, error: `최대 ${max}개까지 선택 가능합니다` };
-  return { valid: true };
-}
+vi.mock("../../public/js/ui.js", () => ({
+  showMsg: vi.fn(),
+  updateDataStatus: vi.fn(),
+  renderAlgoHint: vi.fn(),
+  updateCredit: vi.fn(),
+}));
 
 // ---------------------------------------------------------------------------
-// Tests
+// state.js — pure exports
 // ---------------------------------------------------------------------------
 
-describe("getBallColorClass", () => {
-  it("returns ball-yellow for 1-10", () => {
-    expect(getBallColorClass(1)).toBe("ball-yellow");
-    expect(getBallColorClass(10)).toBe("ball-yellow");
+import {
+  state,
+  MAX_SELECT,
+  ALGOS,
+  TAG_COLORS,
+  ballColorInt,
+  ballColorCSS,
+} from "../../public/js/state.js";
+
+describe("state — initial values", () => {
+  it("credits starts at 3", () => {
+    expect(state.credits).toBe(3);
   });
-  it("returns ball-blue for 11-20", () => {
-    expect(getBallColorClass(11)).toBe("ball-blue");
-    expect(getBallColorClass(20)).toBe("ball-blue");
+
+  it("spinning starts false", () => {
+    expect(state.spinning).toBe(false);
   });
-  it("returns ball-red for 21-30", () => {
-    expect(getBallColorClass(21)).toBe("ball-red");
-    expect(getBallColorClass(30)).toBe("ball-red");
+
+  it("selected starts as empty Set", () => {
+    expect(state.selected instanceof Set).toBe(true);
+    expect(state.selected.size).toBe(0);
   });
-  it("returns ball-gray for 31-40", () => {
-    expect(getBallColorClass(31)).toBe("ball-gray");
-    expect(getBallColorClass(40)).toBe("ball-gray");
+
+  it("ballData has 3 rows of 6 numbers each", () => {
+    expect(state.ballData).toHaveLength(3);
+    state.ballData.forEach((row) => {
+      expect(row).toHaveLength(6);
+      row.forEach((n) => {
+        expect(n).toBeGreaterThanOrEqual(1);
+        expect(n).toBeLessThanOrEqual(45);
+      });
+    });
   });
-  it("returns ball-green for 41-45", () => {
-    expect(getBallColorClass(41)).toBe("ball-green");
-    expect(getBallColorClass(45)).toBe("ball-green");
+
+  it("algoTags defaults to 3 RANDOM entries", () => {
+    expect(state.algoTags).toHaveLength(3);
+    state.algoTags.forEach((t) => expect(t).toBe("RANDOM"));
   });
 });
 
-describe("createBallElement", () => {
-  it("creates a div with correct number", () => {
-    const el = createBallElement(7);
-    expect(el.tagName).toBe("DIV");
-    expect(el.textContent).toBe("7");
-  });
-  it("applies correct color class", () => {
-    expect(createBallElement(5).classList.contains("ball-yellow")).toBe(true);
-    expect(createBallElement(15).classList.contains("ball-blue")).toBe(true);
-    expect(createBallElement(25).classList.contains("ball-red")).toBe(true);
-    expect(createBallElement(35).classList.contains("ball-gray")).toBe(true);
-    expect(createBallElement(42).classList.contains("ball-green")).toBe(true);
+describe("MAX_SELECT", () => {
+  it("is 3", () => {
+    expect(MAX_SELECT).toBe(3);
   });
 });
 
-describe("spinBall", () => {
-  beforeEach(() => { vi.useFakeTimers(); });
-  afterEach(() => { vi.useRealTimers(); });
-
-  it("shows spinning class during animation", async () => {
-    const ball = document.createElement("div");
-    ball.className = "ball";
-    const promise = spinBall(ball, 23, 500);
-    vi.advanceTimersByTime(100);
-    expect(ball.classList.contains("spinning")).toBe(true);
-    vi.advanceTimersByTime(500);
-    await promise;
+describe("ALGOS", () => {
+  it("has all 5 algorithms", () => {
+    expect(ALGOS).toHaveLength(5);
+    const ids = ALGOS.map((a) => a.id);
+    expect(ids).toContain("apriori");
+    expect(ids).toContain("conditional");
+    expect(ids).toContain("markov");
+    expect(ids).toContain("ensemble");
+    expect(ids).toContain("random");
   });
 
-  it("shows final number after stop delay", async () => {
-    const ball = document.createElement("div");
-    const promise = spinBall(ball, 23, 300);
-    vi.advanceTimersByTime(300);
-    await promise;
-    expect(ball.textContent).toBe("23");
-  });
-
-  it("applies stopped class after animation", async () => {
-    const ball = document.createElement("div");
-    const promise = spinBall(ball, 7, 300);
-    vi.advanceTimersByTime(300);
-    await promise;
-    expect(ball.classList.contains("stopped")).toBe(true);
-    expect(ball.classList.contains("spinning")).toBe(false);
-  });
-
-  it("applies correct color class on final number", async () => {
-    const ball = document.createElement("div");
-    const promise = spinBall(ball, 15, 300); // 15 = blue
-    vi.advanceTimersByTime(300);
-    await promise;
-    expect(ball.classList.contains("ball-blue")).toBe(true);
+  it("each algo has id, label, colorOff, colorOn", () => {
+    ALGOS.forEach((a) => {
+      expect(typeof a.id).toBe("string");
+      expect(typeof a.label).toBe("string");
+      expect(typeof a.colorOff).toBe("number");
+      expect(typeof a.colorOn).toBe("number");
+    });
   });
 });
 
-describe("renderResultRow", () => {
-  it("renders 6 balls", () => {
-    const row = renderResultRow([3, 11, 22, 33, 41, 45], "apriori", "Apriori");
-    const balls = row.querySelectorAll(".ball");
-    expect(balls.length).toBe(6);
-  });
-
-  it("shows method label", () => {
-    const row = renderResultRow([3, 11, 22, 33, 41, 45], "apriori", "Apriori");
-    const label = row.querySelector(".method-label");
-    expect(label).not.toBeNull();
-    expect(label.textContent).toBe("Apriori");
-  });
-
-  it("sets data-method attribute", () => {
-    const row = renderResultRow([3, 11, 22, 33, 41, 45], "markov", "마르코프");
-    expect(row.dataset.method).toBe("markov");
-  });
-
-  it("balls have correct numbers", () => {
-    const numbers = [3, 11, 22, 33, 41, 45];
-    const row = renderResultRow(numbers, "conditional", "조건부확률");
-    const balls = [...row.querySelectorAll(".ball")];
-    const rendered = balls.map((b) => Number(b.textContent));
-    expect(rendered).toEqual(numbers);
+describe("TAG_COLORS", () => {
+  it("has 3 CSS color strings", () => {
+    expect(TAG_COLORS).toHaveLength(3);
+    TAG_COLORS.forEach((c) => expect(c).toMatch(/^#[0-9a-f]{6}$/i));
   });
 });
 
-describe("validateAlgorithmSelection", () => {
-  it("rejects empty selection", () => {
-    const result = validateAlgorithmSelection([]);
-    expect(result.valid).toBe(false);
-    expect(result.error).toBeTruthy();
+describe("ballColorInt", () => {
+  it("1-10 → yellow (0xfbbf24)", () => {
+    expect(ballColorInt(1)).toBe(0xfbbf24);
+    expect(ballColorInt(10)).toBe(0xfbbf24);
+  });
+  it("11-20 → blue (0x60a5fa)", () => {
+    expect(ballColorInt(11)).toBe(0x60a5fa);
+    expect(ballColorInt(20)).toBe(0x60a5fa);
+  });
+  it("21-30 → red (0xf87171)", () => {
+    expect(ballColorInt(21)).toBe(0xf87171);
+    expect(ballColorInt(30)).toBe(0xf87171);
+  });
+  it("31-40 → gray (0x9ca3af)", () => {
+    expect(ballColorInt(31)).toBe(0x9ca3af);
+    expect(ballColorInt(40)).toBe(0x9ca3af);
+  });
+  it("41-45 → green (0x4ade80)", () => {
+    expect(ballColorInt(41)).toBe(0x4ade80);
+    expect(ballColorInt(45)).toBe(0x4ade80);
+  });
+});
+
+describe("ballColorCSS", () => {
+  it("1-10 → '#fbbf24'", () => {
+    expect(ballColorCSS(1)).toBe("#fbbf24");
+    expect(ballColorCSS(10)).toBe("#fbbf24");
+  });
+  it("11-20 → '#60a5fa'", () => {
+    expect(ballColorCSS(15)).toBe("#60a5fa");
+  });
+  it("21-30 → '#f87171'", () => {
+    expect(ballColorCSS(25)).toBe("#f87171");
+  });
+  it("31-40 → '#9ca3af'", () => {
+    expect(ballColorCSS(35)).toBe("#9ca3af");
+  });
+  it("41-45 → '#4ade80'", () => {
+    expect(ballColorCSS(42)).toBe("#4ade80");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// api.js — fetch helpers with mocked global fetch
+// ---------------------------------------------------------------------------
+
+import { fetchStats, fetchGenerate } from "../../public/js/api.js";
+
+describe("fetchStats", () => {
+  beforeEach(() => {
+    vi.stubGlobal("fetch", vi.fn());
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
-  it("rejects more than 3 selections", () => {
-    const result = validateAlgorithmSelection(["a", "b", "c", "d"]);
-    expect(result.valid).toBe(false);
-    expect(result.error).toContain("3");
+  it("calls /api/stats and returns data", async () => {
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ total: 1215, latest_draw_no: 1215 }),
+    });
+    const result = await fetchStats();
+    expect(fetch).toHaveBeenCalledWith("/api/stats", expect.any(Object));
+    expect(result.total).toBe(1215);
+    expect(result.latest_draw_no).toBe(1215);
   });
 
-  it("accepts 1 selection", () => {
-    expect(validateAlgorithmSelection(["apriori"]).valid).toBe(true);
+  it("returns zeros on network failure", async () => {
+    fetch.mockRejectedValueOnce(new Error("network error"));
+    const result = await fetchStats();
+    expect(result).toEqual({ total: 0, latest_draw_no: 0 });
   });
 
-  it("accepts exactly 3 selections", () => {
-    expect(validateAlgorithmSelection(["apriori", "conditional", "markov"]).valid).toBe(true);
+  it("returns zeros on non-ok response", async () => {
+    fetch.mockResolvedValueOnce({ ok: false, status: 500 });
+    const result = await fetchStats();
+    expect(result).toEqual({ total: 0, latest_draw_no: 0 });
+  });
+});
+
+describe("fetchGenerate", () => {
+  beforeEach(() => {
+    vi.stubGlobal("fetch", vi.fn());
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("POSTs to /api/generate with methods in body", async () => {
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: () =>
+        Promise.resolve([
+          { method: "apriori", numbers: [1, 5, 10, 20, 33, 44], score: 42 },
+        ]),
+    });
+    await fetchGenerate(["apriori"]);
+    expect(fetch).toHaveBeenCalledWith(
+      "/api/generate",
+      expect.objectContaining({ method: "POST" })
+    );
+    const body = JSON.parse(fetch.mock.calls[0][1].body);
+    expect(body.methods).toEqual(["apriori"]);
+  });
+
+  it("returns array from server response", async () => {
+    const mockData = [
+      { method: "markov", numbers: [2, 8, 15, 22, 37, 41], score: 0.9 },
+    ];
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(mockData),
+    });
+    const result = await fetchGenerate(["markov"]);
+    expect(result).toHaveLength(1);
+    expect(result[0].method).toBe("markov");
+  });
+
+  it("falls back to local random on server error", async () => {
+    fetch.mockRejectedValueOnce(new Error("server down"));
+    const result = await fetchGenerate(["apriori"]);
+    expect(result).toHaveLength(1);
+    expect(result[0].numbers).toHaveLength(6);
+    expect(result[0].numbers.every((n) => n >= 1 && n <= 45)).toBe(true);
+  });
+
+  it("fallback numbers have no duplicates", async () => {
+    fetch.mockRejectedValueOnce(new Error("err"));
+    const result = await fetchGenerate(["random"]);
+    const nums = result[0].numbers;
+    expect(new Set(nums).size).toBe(6);
   });
 });

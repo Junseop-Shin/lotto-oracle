@@ -190,3 +190,108 @@ class TestMarkov:
         results = generate_markov([], count=1)
         assert len(results) == 1
         assert is_valid_result(results[0])
+
+
+class TestRandom:
+    def test_returns_valid_numbers(self):
+        from src.analyzer import generate_random, get_all_draws
+        results = generate_random(get_all_draws(), count=1)
+        assert len(results) == 1
+        assert is_valid_result(results[0])
+
+    def test_method_label(self):
+        from src.analyzer import generate_random, get_all_draws
+        results = generate_random(get_all_draws(), count=1)
+        assert results[0]["method"] == "random"
+
+    def test_produces_unique_numbers(self):
+        from src.analyzer import generate_random, get_all_draws
+        results = generate_random(get_all_draws(), count=5)
+        assert len(results) == 5
+        for r in results:
+            assert len(set(r["numbers"])) == 6
+
+    def test_score_is_zero(self):
+        from src.analyzer import generate_random, get_all_draws
+        results = generate_random(get_all_draws(), count=1)
+        assert results[0]["score"] == 0.0
+
+
+class TestEnsemble:
+    def test_returns_valid_numbers(self):
+        from src.analyzer import generate_ensemble, get_all_draws
+        results = generate_ensemble(get_all_draws(), count=1)
+        assert len(results) == 1
+        assert is_valid_result(results[0])
+
+    def test_method_label(self):
+        from src.analyzer import generate_ensemble, get_all_draws
+        results = generate_ensemble(get_all_draws(), count=1)
+        assert results[0]["method"] == "ensemble"
+
+    def test_numbers_are_from_vote_pool(self):
+        """Ensemble picks top-voted numbers — all must be in 1..45."""
+        from src.analyzer import generate_ensemble, get_all_draws
+        results = generate_ensemble(get_all_draws(), count=1)
+        nums = results[0]["numbers"]
+        assert all(1 <= n <= 45 for n in nums)
+        assert len(set(nums)) == 6
+
+
+# ---------------------------------------------------------------------------
+# Predictions table tests
+# ---------------------------------------------------------------------------
+
+class TestPredictions:
+    def test_save_and_retrieve(self):
+        from src.database import save_prediction, get_predictions
+        save_prediction(100, "apriori", [1, 2, 3, 4, 5, 6], 42.0)
+        rows = get_predictions(["apriori"])
+        assert len(rows) == 1
+        assert rows[0]["method"] == "apriori"
+        assert rows[0]["numbers"] == [1, 2, 3, 4, 5, 6]
+        assert rows[0]["score"] == 42.0
+        assert rows[0]["draw_no"] == 100
+
+    def test_get_predictions_returns_latest_draw_no(self):
+        from src.database import save_prediction, get_predictions
+        save_prediction(50,  "markov", [1, 2, 3, 4, 5, 6], 1.0)
+        save_prediction(100, "markov", [7, 8, 9, 10, 11, 12], 2.0)
+        rows = get_predictions(["markov"])
+        assert len(rows) == 1
+        assert rows[0]["draw_no"] == 100  # should return latest only
+
+    def test_get_predictions_multiple_methods(self):
+        from src.database import save_prediction, get_predictions
+        save_prediction(100, "apriori",     [1, 2, 3, 4, 5, 6], 1.0)
+        save_prediction(100, "conditional", [7, 8, 9, 10, 11, 12], 2.0)
+        rows = get_predictions(["apriori", "conditional"])
+        methods = {r["method"] for r in rows}
+        assert methods == {"apriori", "conditional"}
+
+    def test_ignore_duplicate_draw_method(self):
+        from src.database import save_prediction, get_predictions
+        save_prediction(100, "random", [1, 2, 3, 4, 5, 6], 0.0)
+        save_prediction(100, "random", [7, 8, 9, 10, 11, 12], 0.0)  # should be ignored
+        rows = get_predictions(["random"])
+        assert rows[0]["numbers"] == [1, 2, 3, 4, 5, 6]  # first write wins
+
+    def test_compute_and_save_all_populates_all_methods(self):
+        from src.analyzer import compute_and_save_all, ALGORITHM_REGISTRY
+        from src.database import get_predictions
+        compute_and_save_all()
+        methods = list(ALGORITHM_REGISTRY.keys())
+        rows = get_predictions(methods)
+        saved_methods = {r["method"] for r in rows}
+        assert saved_methods == set(methods)
+
+    def test_compute_and_save_all_numbers_are_valid(self):
+        from src.analyzer import compute_and_save_all, ALGORITHM_REGISTRY
+        from src.database import get_predictions
+        compute_and_save_all()
+        rows = get_predictions(list(ALGORITHM_REGISTRY.keys()))
+        for row in rows:
+            nums = row["numbers"]
+            assert len(nums) == 6
+            assert len(set(nums)) == 6
+            assert all(1 <= n <= 45 for n in nums)
