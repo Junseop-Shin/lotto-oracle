@@ -15,4 +15,4 @@ RUN mkdir -p db
 
 EXPOSE 8000
 
-CMD ["python", "src/main.py"]
+CMD ["python", "-m", "src.main"]
