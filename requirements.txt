@@ -7,3 +7,4 @@ mlxtend==0.23.1
 numpy==1.26.4
 pandas==2.2.1
 python-dotenv==1.0.1
+openpyxl>=3.1.0
