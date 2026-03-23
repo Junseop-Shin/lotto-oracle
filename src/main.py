@@ -1,10 +1,12 @@
 import os
+import asyncio
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, field_validator
 from dotenv import load_dotenv
+import httpx
 
 load_dotenv()
 
@@ -30,6 +32,21 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Lotto Oracle", lifespan=lifespan)
+
+INGESTOR_URL = os.getenv("INGESTOR_URL")
+
+
+async def _track(event_type: str, metadata: dict):
+    if not INGESTOR_URL:
+        return
+    try:
+        async with httpx.AsyncClient(timeout=3) as client:
+            await client.post(
+                f"{INGESTOR_URL}/v1/events",
+                json={"event_type": event_type, "service_id": "lotto-oracle", "metadata": metadata},
+            )
+    except Exception:
+        pass
 
 
 # ---------------------------------------------------------------------------
@@ -97,7 +114,7 @@ class GenerateRequest(BaseModel):
 
 
 @app.post("/api/generate")
-def generate_numbers(req: GenerateRequest):
+async def generate_numbers(req: GenerateRequest):
     # 1. predictions 테이블에서 조회
     stored = get_predictions(req.methods)
 
@@ -106,6 +123,7 @@ def generate_numbers(req: GenerateRequest):
     if stored_methods >= set(req.methods):
         # 요청한 methods 순서대로 정렬해서 반환
         ordered = [next(r for r in stored if r["method"] == m) for m in req.methods]
+        asyncio.create_task(_track("api_call", {"endpoint": "/api/generate", "methods": req.methods}))
         return ordered
 
     # 2. 저장된 결과가 없으면(최초 실행 등) 실시간 계산 후 저장
@@ -114,6 +132,7 @@ def generate_numbers(req: GenerateRequest):
     from src.database import save_prediction
     for r in results:
         save_prediction(latest, r["method"], r["numbers"], r["score"])
+    asyncio.create_task(_track("api_call", {"endpoint": "/api/generate", "methods": req.methods}))
     return results
 
 
