@@ -26,6 +26,7 @@ jobs:
           SSH="ssh -i ~/.ssh/id_deploy -p ${{ secrets.DEPLOY_PORT }} -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}"
           $SSH "if not exist \"${{ secrets.DEPLOY_PATH }}\" mkdir \"${{ secrets.DEPLOY_PATH }}\""
           tar czf - --exclude='.git' --exclude='db' --exclude='.env' . | $SSH "tar xzf - -C ${{ secrets.DEPLOY_PATH }}"
+          $SSH "echo INGESTOR_URL=${{ secrets.INGESTOR_URL }} > ${{ secrets.DEPLOY_PATH }}/.env"
 
       - name: Deploy with Docker
         run: |
