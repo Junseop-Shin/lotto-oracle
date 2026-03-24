@@ -41,5 +41,16 @@
 
   <!-- ES Module 진입점: main.js 가 모든 모듈을 연결 -->
   <script type="module" src="/static/js/main.js"></script>
+  <script>
+    fetch('https://ingestor.nuclearbomb6518.com/v1/events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event_type: 'page_view',
+        service_id: 'lotto-oracle',
+        metadata: { path: window.location.pathname, referrer: document.referrer || undefined }
+      })
+    }).catch(function(){});
+  </script>
 </body>
 </html>
