@@ -20,9 +20,6 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Install Playwright browser
-        run: playwright install chromium --with-deps
-
       - name: Run pytest
         run: PYTHONPATH=. pytest tests/test_algorithms.py tests/test_api.py -v --tb=short
 

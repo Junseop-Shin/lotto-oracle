@@ -1029,12 +1029,15 @@ async function init() {
 
 init();
 </script>
+<script src="/config.js"></script>
 <script>
   (function() {
+    var ingestorUrl = window.__INGESTOR_URL__;
+    if (!ingestorUrl) return;
     var key = '_aid';
     var id = localStorage.getItem(key);
     if (!id) { id = crypto.randomUUID(); localStorage.setItem(key, id); }
-    fetch('https://ingestor.nuclearbomb6518.com/v1/events', {
+    fetch(ingestorUrl + '/v1/events', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
