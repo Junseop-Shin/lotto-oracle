@@ -1029,5 +1029,22 @@ async function init() {
 
 init();
 </script>
+<script>
+  (function() {
+    var key = '_aid';
+    var id = localStorage.getItem(key);
+    if (!id) { id = crypto.randomUUID(); localStorage.setItem(key, id); }
+    fetch('https://ingestor.nuclearbomb6518.com/v1/events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event_type: 'page_view',
+        service_id: 'lotto-oracle',
+        user_id: id,
+        metadata: { path: window.location.pathname, referrer: document.referrer || undefined }
+      })
+    }).catch(function(){});
+  })();
+</script>
 </body>
 </html>

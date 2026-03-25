@@ -36,14 +36,14 @@ app = FastAPI(title="Lotto Oracle", lifespan=lifespan)
 INGESTOR_URL = os.getenv("INGESTOR_URL")
 
 
-async def _track(event_type: str, metadata: dict):
+async def _track(event_type: str, metadata: dict, user_id: str | None = None):
     if not INGESTOR_URL:
         return
     try:
         async with httpx.AsyncClient(timeout=3) as client:
             await client.post(
                 f"{INGESTOR_URL}/v1/events",
-                json={"event_type": event_type, "service_id": "lotto-oracle", "metadata": metadata},
+                json={"event_type": event_type, "service_id": "lotto-oracle", "user_id": user_id, "metadata": metadata},
             )
     except Exception:
         pass
@@ -114,16 +114,17 @@ class GenerateRequest(BaseModel):
 
 
 @app.post("/api/generate")
-async def generate_numbers(req: GenerateRequest):
+async def generate_numbers(req: GenerateRequest, request: Request):
     # 1. predictions 테이블에서 조회
     stored = get_predictions(req.methods)
+    client_ip = request.client.host if request.client else None
 
     # 저장된 결과가 모든 요청 알고리즘을 커버하면 그대로 반환
     stored_methods = {r["method"] for r in stored}
     if stored_methods >= set(req.methods):
         # 요청한 methods 순서대로 정렬해서 반환
         ordered = [next(r for r in stored if r["method"] == m) for m in req.methods]
-        asyncio.create_task(_track("api_call", {"endpoint": "/api/generate", "methods": req.methods}))
+        asyncio.create_task(_track("api_call", {"endpoint": "/api/generate", "methods": req.methods}, user_id=client_ip))
         return ordered
 
     # 2. 저장된 결과가 없으면(최초 실행 등) 실시간 계산 후 저장
@@ -132,7 +133,7 @@ async def generate_numbers(req: GenerateRequest):
     from src.database import save_prediction
     for r in results:
         save_prediction(latest, r["method"], r["numbers"], r["score"])
-    asyncio.create_task(_track("api_call", {"endpoint": "/api/generate", "methods": req.methods}))
+    asyncio.create_task(_track("api_call", {"endpoint": "/api/generate", "methods": req.methods}, user_id=client_ip))
     return results
 
 
