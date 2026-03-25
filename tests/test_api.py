@@ -16,9 +16,13 @@ def client(tmp_path, monkeypatch):
     """TestClient with isolated temp DB and scheduler disabled."""
     import src.database as db_module
     import src.main as main_module
+    import src.fetcher as fetcher_module
+    import src.analyzer as analyzer_module
 
     monkeypatch.setattr(db_module, "DB_PATH", tmp_path / "test.db")
     monkeypatch.setattr(main_module, "setup_scheduler", lambda: None)
+    monkeypatch.setattr(fetcher_module, "fetch_all", AsyncMock(return_value=0))
+    monkeypatch.setattr(analyzer_module, "compute_and_save_all", lambda: None)
 
     from src.main import app
     with TestClient(app) as c:
@@ -30,9 +34,13 @@ def client_with_data(tmp_path, monkeypatch):
     """TestClient with 10 sample draws pre-loaded."""
     import src.database as db_module
     import src.main as main_module
+    import src.fetcher as fetcher_module
+    import src.analyzer as analyzer_module
 
     monkeypatch.setattr(db_module, "DB_PATH", tmp_path / "test.db")
     monkeypatch.setattr(main_module, "setup_scheduler", lambda: None)
+    monkeypatch.setattr(fetcher_module, "fetch_all", AsyncMock(return_value=0))
+    monkeypatch.setattr(analyzer_module, "compute_and_save_all", lambda: None)
 
     from src.database import init_db, get_conn
     init_db()
