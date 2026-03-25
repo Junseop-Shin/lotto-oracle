@@ -3,7 +3,7 @@ import asyncio
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, PlainTextResponse
 from pydantic import BaseModel, field_validator
 from dotenv import load_dotenv
 import httpx
@@ -135,6 +135,18 @@ async def generate_numbers(req: GenerateRequest, request: Request):
         save_prediction(latest, r["method"], r["numbers"], r["score"])
     asyncio.create_task(_track("api_call", {"endpoint": "/api/generate", "methods": req.methods}, user_id=client_ip))
     return results
+
+
+# ---------------------------------------------------------------------------
+# Config endpoint — exposes INGESTOR_URL to client-side HTML
+# ---------------------------------------------------------------------------
+@app.get("/config.js")
+def config_js():
+    url = INGESTOR_URL or ""
+    return PlainTextResponse(
+        f"window.__INGESTOR_URL__ = '{url}';",
+        media_type="application/javascript",
+    )
 
 
 # ---------------------------------------------------------------------------
