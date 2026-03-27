@@ -12,8 +12,7 @@
  */
 
 import * as THREE from 'three';
-import { toon, rbox, add } from './helpers.js';
-import { scene } from './scene.js';
+import { toon, rbox, add, machineGroup } from './helpers.js';
 import { register } from './interactions.js';
 import { state } from '../state.js';
 import { showMsg, updateCredit } from '../ui.js';
@@ -44,7 +43,7 @@ export function buildLever() {
     toon(0xc8b8b8)
   );
   leverStick.position.set(2.11, STICK_BASE_Y, 0.68);
-  scene.add(leverStick);
+  machineGroup.add(leverStick);
 
   // 레버 손잡이 구체 (복숭아색)
   leverKnob = new THREE.Mesh(
@@ -52,7 +51,7 @@ export function buildLever() {
     toon(0xffd4a7)
   );
   leverKnob.position.set(2.11, KNOB_BASE_Y, 0.68);
-  scene.add(leverKnob);
+  machineGroup.add(leverKnob);
 
   // 손잡이 테두리 도넛 (민트)
   add(new THREE.TorusGeometry(0.18, 0.03, 7, 22), toon(0xa7f5ce), 2.11, KNOB_BASE_Y, 0.68);

@@ -1,20 +1,26 @@
-/* style-3d.css — LOTTO ORACLE 3D UI 스타일
- *
- * Three.js 캔버스는 전체 화면을 차지하고,
- * HUD(크레딧, 메시지 등)는 position:fixed 로 캔버스 위에 overlay해요.
- * pointer-events: none → 마우스 이벤트가 HUD를 통과해서 3D 씬에 전달됨
- */
+/* style-3d.css — LOTTO ORACLE 3D UI 스타일 */
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   background: #f0e6ff;
-  overflow: hidden;           /* 스크롤바 숨김 */
+  overflow: hidden;
   font-family: 'Courier New', Courier, monospace;
 }
 
 canvas {
   display: block;
+}
+
+/* 모바일 세로: 캔버스가 전체화면이 아니므로 배경색으로 나머지 채움 */
+@media (max-width: 767px) and (orientation: portrait) {
+  body {
+    background: #ede4ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
 }
 
 /* ── HUD (Head-Up Display) ───────────────────────────────────────────── */
@@ -26,19 +32,20 @@ canvas {
   display: flex;
   gap: 14px;
   align-items: center;
-  pointer-events: none;  /* 마우스 클릭이 아래 3D 씬으로 통과 */
+  pointer-events: none;
   z-index: 10;
 }
 
 #credit-display {
   background: #2d1b4e;
   color: #ffd700;
-  padding: 8px 22px;
+  padding: 8px 18px;
   border-radius: 999px;
   font-size: 15px;
   font-weight: bold;
   letter-spacing: 3px;
   border: 3px solid #4a3570;
+  white-space: nowrap;
 }
 
 #msg-box {
@@ -49,32 +56,25 @@ canvas {
   font-size: 13px;
   letter-spacing: 1px;
   border: 2px solid #d4c5f0;
-  max-width: 320px;
+  min-width: 160px;
   text-align: center;
+  white-space: nowrap;
 }
 
 /* ── 하단 알고리즘 태그 힌트 ─────────────────────────────────────────── */
 #algo-hint {
   position: fixed;
-  bottom: 52px;
+  bottom: 80px;   /* hint(~46px) + 태그높이(~26px) + 여백(8px) */
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 8px;
+  gap: 6px;
   pointer-events: none;
-  z-index: 10;
+  z-index: 11;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 
-.atag {
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: bold;
-  color: #333;
-  border: 2px solid rgba(0, 0, 0, 0.12);
-}
-
-/* ── 조작 힌트 ───────────────────────────────────────────────────────── */
 #hint {
   position: fixed;
   bottom: 18px;
@@ -83,10 +83,23 @@ canvas {
   color: #888;
   font-size: 12px;
   background: rgba(255, 255, 255, 0.75);
-  padding: 5px 16px;
-  border-radius: 999px;
+  padding: 8px 20px;
+  border-radius: 16px;
   pointer-events: none;
   z-index: 10;
+  width: 90vw;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.atag {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #333;
+  border: 2px solid rgba(0, 0, 0, 0.12);
+  white-space: nowrap;
 }
 
 /* ── 데이터 상태 표시 (우하단) ───────────────────────────────────────── */
@@ -98,4 +111,53 @@ canvas {
   font-size: 11px;
   pointer-events: none;
   z-index: 10;
+}
+
+/* ── 모바일 반응형 ────────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  #hud {
+    top: 14px;
+    gap: 10px;
+  }
+
+  #credit-display {
+    padding: 8px 18px;
+    font-size: 15px;
+    letter-spacing: 2px;
+  }
+
+  #msg-box {
+    font-size: 14px;
+    padding: 10px 16px;
+    max-width: 240px;
+  }
+
+  #algo-hint {
+    bottom: 100px;  /* hint(모바일 ~50px) + 태그높이(~42px) + 여백(8px) */
+    gap: 8px;
+  }
+
+  .atag {
+    padding: 6px 16px;
+    font-size: 14px;
+  }
+
+  #hint {
+    bottom: 18px;
+    font-size: 14px;
+    padding: 7px 18px;
+  }
+
+  #data-status {
+    font-size: 12px;
+    bottom: 18px;
+    right: 12px;
+  }
+}
+
+/* ── 모바일 가로 ──────────────────────────────────────────────────────── */
+@media (max-width: 767px) and (orientation: landscape) {
+  #hud { top: 6px; }
+  #hint { display: none; }
+  #algo-hint { bottom: 10px; }
 }

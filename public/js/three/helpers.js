@@ -29,6 +29,10 @@ import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { scene } from './scene.js';
 
+// 기계 전체를 담는 그룹 — position.y 조정으로 기계 전체를 올리거나 내릴 수 있음
+export const machineGroup = new THREE.Group();
+scene.add(machineGroup);
+
 // ── Gradient Map (셀 쉐이딩 3단계) ───────────────────────────────────
 // 1×3 픽셀짜리 텍스처를 직접 만들어요:
 //   픽셀0 = 흰색 (밝은 면)
@@ -72,6 +76,6 @@ export function add(geo, mat, x = 0, y = 0, z = 0, shadow = false) {
     mesh.castShadow    = true; // 이 물체가 다른 물체에 그림자를 드리움
     mesh.receiveShadow = true; // 이 물체가 그림자를 받음
   }
-  scene.add(mesh);
-  return mesh; // 나중에 움직이거나 클릭 감지 등에 쓸 수 있게 반환
+  machineGroup.add(mesh);
+  return mesh;
 }

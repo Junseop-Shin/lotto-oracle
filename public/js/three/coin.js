@@ -15,8 +15,7 @@
  */
 
 import * as THREE from 'three';
-import { toon, rbox, add } from './helpers.js';
-import { scene } from './scene.js';
+import { toon, rbox, add, machineGroup } from './helpers.js';
 import { register } from './interactions.js';
 import { state } from '../state.js';
 import { showMsg, updateCredit } from '../ui.js';
@@ -49,7 +48,7 @@ export function buildCoin() {
     toon(0xffd166)
   );
   indDot.position.set(-0.9, -1.96, 0.88);
-  scene.add(indDot);
+  machineGroup.add(indDot);
 
   // 동전: CylinderGeometry(위반지름, 아래반지름, 두께, 분할수)
   // 납작한 원기둥 → 동전 형태
@@ -59,7 +58,7 @@ export function buildCoin() {
   );
   coinMesh.rotation.x = Math.PI / 2; // 세워진 동전처럼 정면을 향하게
   coinMesh.position.set(-0.9, -1.73, 0.88);
-  scene.add(coinMesh);
+  machineGroup.add(coinMesh);
 
   // 크레딧 표시 패널 (보라색 작은 박스)
   add(rbox(0.82, 0.26, 0.07, 0.07, 2), toon(0x2d1b4e), 0.72, -2.14, 0.85);

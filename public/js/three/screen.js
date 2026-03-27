@@ -42,14 +42,14 @@ const ctx = cv.getContext('2d');
 export const screenTexture = new THREE.CanvasTexture(cv);
 
 // ── 레이아웃 상수 ─────────────────────────────────────────────────────
-const SLOT_W       = 96;   // 슬롯 창 너비 (px)
-const SLOT_H       = 168;  // 슬롯 창 높이 (3개 숫자 표시)
-const NUM_H        = 56;   // 릴 안 숫자 1개당 높이
-const COL_SPACING  = 130;  // 열 간격
-const COL_FIRST_CX = 82;   // 첫 번째 열 중심 x
-const ROW_SPACING  = 184;  // 행 간격
-const ROW_FIRST_Y  = 36;   // 첫 번째 행 슬롯 상단 y
-const TAG_CX       = 910;  // 알고리즘 태그 중심 x
+const SLOT_W       = 120;  // 슬롯 창 너비 (px)  ← 96→120 (+25%)
+const SLOT_H       = 188;  // 슬롯 창 높이 (3개 숫자 표시)  ← 168→188
+const NUM_H        = 62;   // 릴 안 숫자 1개당 높이  ← 56→62
+const COL_SPACING  = 148;  // 열 간격  ← 130→148
+const COL_FIRST_CX = 90;   // 첫 번째 열 중심 x  ← 82→90
+const ROW_SPACING  = 190;  // 행 간격  ← 184→190
+const ROW_FIRST_Y  = 30;   // 첫 번째 행 슬롯 상단 y  ← 36→30
+const TAG_CX       = 945;  // 알고리즘 태그 중심 x  ← 910→945
 
 // ── 릴 상태 ──────────────────────────────────────────────────────────
 let reels           = null;  // 스핀 중일 때 릴 배열, null이면 정적 표시
@@ -213,7 +213,7 @@ function drawSlot(reel, cx, slotY) {
     const distFromCenter = Math.abs(numY - centerY) / (SLOT_H / 2);
     ctx.globalAlpha = Math.max(0.08, 1 - distFromCenter * 1.1);
 
-    drawReelBall(cx, numY, num, 22);
+    drawReelBall(cx, numY, num, 30);
   }
 
   ctx.globalAlpha = 1;
@@ -258,20 +258,32 @@ function drawReelBall(cx, cy, num, r) {
 
 // ── 알고리즘 태그 그리기 (행마다 오른쪽) ─────────────────────────────
 function drawAlgoTag(ri) {
-  const tagY   = ROW_FIRST_Y + ri * ROW_SPACING + SLOT_H / 2;
-  const label  = state.algoTags[ri] ?? 'RANDOM';
-  const tw     = 150;
+  const tagY  = ROW_FIRST_Y + ri * ROW_SPACING + SLOT_H / 2;
+  const label = state.algoTags[ri] ?? 'RANDOM';
+  const tw    = 160;
+  const th    = 52;
 
-  ctx.fillStyle = TAG_COLORS[ri];
+  // 어두운 테두리 (가시성 향상)
+  ctx.fillStyle = 'rgba(0,0,0,0.35)';
   ctx.beginPath();
-  ctx.roundRect(TAG_CX - tw / 2, tagY - 22, tw, 44, 10);
+  ctx.roundRect(TAG_CX - tw / 2 - 2, tagY - th / 2 - 2, tw + 4, th + 4, 12);
   ctx.fill();
 
-  ctx.fillStyle    = '#333';
-  ctx.font         = 'bold 20px "Courier New"';
-  ctx.textAlign    = 'center';
-  ctx.textBaseline = 'middle';
+  // 배경
+  ctx.fillStyle = TAG_COLORS[ri];
+  ctx.beginPath();
+  ctx.roundRect(TAG_CX - tw / 2, tagY - th / 2, tw, th, 10);
+  ctx.fill();
+
+  // 텍스트 (진한 색 + 그림자)
+  ctx.shadowColor   = 'rgba(0,0,0,0.4)';
+  ctx.shadowBlur    = 3;
+  ctx.fillStyle     = '#111';
+  ctx.font          = 'bold 24px "Courier New"';
+  ctx.textAlign     = 'center';
+  ctx.textBaseline  = 'middle';
   ctx.fillText(label, TAG_CX, tagY);
+  ctx.shadowBlur    = 0;
 }
 
 // ── 유리 화면 반사 오버레이 (전체 화면에 한 번만) ───────────────────
@@ -335,7 +347,7 @@ export function drawScreen() {
 
 // ── 정적 화면용 큰 볼 ────────────────────────────────────────────────
 function drawBigBall(cx, cy, num) {
-  const r = 34;
+  const r = 48;  // 34→44→48
 
   // 볼
   ctx.fillStyle = ballColorCSS(num);
@@ -345,7 +357,7 @@ function drawBigBall(cx, cy, num) {
 
   // 번호
   ctx.fillStyle    = '#111';
-  ctx.font         = 'bold 26px "Courier New"';
+  ctx.font         = 'bold 34px "Courier New"';  // 26→34
   ctx.textAlign    = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(num.toString(), cx, cy + 1);

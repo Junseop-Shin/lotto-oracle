@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LOTTO ORACLE 3D</title>
+  <link rel="icon" href="/static/favicon.ico" />
   <link rel="stylesheet" href="/static/style-3d.css" />
 
   <!--
@@ -33,8 +34,15 @@
   <!-- 하단 알고리즘 태그 힌트 -->
   <div id="algo-hint"></div>
 
-  <!-- 조작 안내 -->
-  <div id="hint">🖱 드래그: 회전 &nbsp;|&nbsp; 스크롤: 줌 &nbsp;|&nbsp; 동전: 크레딧 충전 &nbsp;|&nbsp; 레버: 번호 생성</div>
+  <!-- 조작 안내 (데스크탑/모바일 분기) -->
+  <div id="hint" class="hint-desktop">🖱 드래그: 회전 | 스크롤: 줌<br>동전: 크레딧 충전 | 레버: 번호 생성</div>
+  <div id="hint" class="hint-mobile" style="display:none">👆 드래그: 회전 | 핀치: 줌<br>동전 탭: 충전 | 레버 탭: 생성</div>
+  <script>
+    if ('ontouchstart' in window) {
+      document.querySelector('.hint-desktop').style.display = 'none';
+      document.querySelector('.hint-mobile').style.display = '';
+    }
+  </script>
 
   <!-- 데이터 상태 (우하단) -->
   <div id="data-status"></div>

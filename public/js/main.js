@@ -21,6 +21,7 @@
 
 // ── Three.js 핵심 (import 순서에 주의: 의존성 먼저) ─────────────────
 import { scene, camera, renderer, controls } from './three/scene.js';
+import { machineGroup } from './three/helpers.js';
 
 // ── 3D 오브젝트 빌더 ─────────────────────────────────────────────────
 import { buildMachine }           from './three/machine.js';
@@ -57,7 +58,7 @@ function buildFloor() {
   floor.rotation.x = -Math.PI / 2; // 수평으로 눕힘 (기본은 수직 평면)
   floor.position.y = -2.68;
   floor.receiveShadow = true;
-  scene.add(floor);
+  machineGroup.add(floor); // 기계 그룹에 포함 → 기계와 함께 이동
 }
 
 // ════════════════════════════════════════════════════════════════════
@@ -109,4 +110,18 @@ function animate() {
 
 // ── 실행 ─────────────────────────────────────────────────────────────
 init();
+
+// 모바일 세로: 기계 전체를 위로 올려서 캔버스 수직 중앙 정렬
+const MOBILE_Y_OFFSET = 2.5;
+if (window.innerWidth < 768 && window.innerHeight > window.innerWidth) {
+  machineGroup.position.y = MOBILE_Y_OFFSET;
+}
+
 animate();
+
+// DevTools 콘솔에서 실시간 조정용
+// machineGroup.position.y = 1.0  ← 기계 위로
+// camera.position.set(x,y,z); controls.update()
+window.camera       = camera;
+window.controls     = controls;
+window.machineGroup = machineGroup;
