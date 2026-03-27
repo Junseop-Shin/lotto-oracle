@@ -16,8 +16,7 @@
  */
 
 import * as THREE from 'three';
-import { toon, rbox, add } from './helpers.js';
-import { scene } from './scene.js';
+import { toon, rbox, add, machineGroup } from './helpers.js';
 import { register } from './interactions.js';
 import { state, ALGOS, MAX_SELECT } from '../state.js';
 import { showMsg, renderAlgoHint } from '../ui.js';
@@ -51,7 +50,7 @@ export function buildButtons() {
     );
     btn.rotation.x = Math.PI / 2; // Y축→Z축 방향으로 눕힘 (정면을 향하게)
     btn.position.set(bx, by, 0.90);
-    scene.add(btn);
+    machineGroup.add(btn);
     btnMeshes.push(btn);
 
     // 테두리 도넛
